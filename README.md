@@ -59,8 +59,10 @@ Build this project as given below:
 Run this server as given below:
 
 ```bash
-~$ java -jar kafkaProducer-0.1.0-SNAPSHOT.jar
+~$ java -jar ./producer/target/kafkaProducer-0.1.0-SNAPSHOT-jar-with-dependencies.jar
 ```
+
+Or, can provide `-Dconfig.file=./producer/src/main/resources/application.conf` before `-jar` flag.
 
 Open in other terminal window kafkacat as given below:
 ```bash

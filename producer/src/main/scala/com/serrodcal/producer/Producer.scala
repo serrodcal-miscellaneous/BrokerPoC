@@ -1,5 +1,6 @@
 package com.serrodcal.producer
 
+import akka.NotUsed
 import akka.event.Logging
 import akka.stream.ActorMaterializer
 import akka.util.Timeout
@@ -48,8 +49,7 @@ object Producer extends App {
     path("publish") {
       entity(as[String]) { message =>
         logger.info(s"Message recived: {$message}")
-        Source(message)
-          .map(_.toString)
+        Source.single(message)
           .map(message => new ProducerRecord[String, String]("myTopic", message))
           .runWith(akka.kafka.scaladsl.Producer.plainSink(producerSettings))
         complete(StatusCodes.Accepted, "Message recived and sent to Kafka!")

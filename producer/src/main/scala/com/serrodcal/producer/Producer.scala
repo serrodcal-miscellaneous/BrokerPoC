@@ -45,12 +45,14 @@ object Producer extends App {
 
   implicit val timeout = Timeout(1 seconds)
 
+  val topic = config.getString("akka.kafka.producer.kafka-clients.topic")
+
   val route : Route = post {
     path("publish") {
       entity(as[String]) { message =>
         logger.info(s"Message recived: {$message}")
         Source.single(message)
-          .map(message => new ProducerRecord[String, String]("myTopic", message))
+          .map(message => new ProducerRecord[String, String](topic, message))
           .runWith(akka.kafka.scaladsl.Producer.plainSink(producerSettings))
         complete(StatusCodes.Accepted, "Message recived and sent to Kafka!")
       }

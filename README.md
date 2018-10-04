@@ -89,9 +89,7 @@ Finally, can see the output in kafkacat terminal window:
 ```bash
 ~$ kafkacat -C -b localhost:9092 -t myTopic
    % Reached end of topic myTopic [0] at offset 0
-   f
-   o
-   o
+   foo
    % Reached end of topic myTopic [0] at offset 3
 ```
 

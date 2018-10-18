@@ -18,7 +18,7 @@ To test Kafka server, please install `kafkacat`:
 ~$ brew install kafkacat
 ```
 
-or 
+or
 
 ```bash
 ~$ apt-get install kafkacat
@@ -26,7 +26,7 @@ or
 
 #### Using kafkacat
 
-* Get server info (brokers and topics): 
+* Get server info (brokers and topics):
 
 ```bash
 ~$ kafkacat -L -b localhost
@@ -35,19 +35,19 @@ or
 * Produce a message in a given topic:
 
 ```bash
-~$ echo "foo" | kafkacat -P -b localhost:9092 -t mytopic
+~$ echo "foo" | kafkacat -P -b localhost:9092 -t myTopic
 ```
 
 * Consume a message from a given topic:
 
 ```bash
-~$ kafkacat -C -b localhost:9092 -t mytopic
+~$ kafkacat -C -b localhost:9092 -t myTopic
 ```
 
 ## Producer
 
-Under `producer/` directory, there is a Maven project which uses Akka, Akka-Http, Akka-Stram, 
-Alpakka in Scala. This is a simple HTTP server which recives request by POST in `/publish` and 
+Under `producer/` directory, there is a Maven project which uses Akka, Akka-Http, Akka-Stram,
+Alpakka in Scala. This is a simple HTTP server which recives request by POST in `/publish` and
 send the message in body to Kafka (topic name is "myTopic").
 
 Build this project as given below:
@@ -68,19 +68,19 @@ Open in other terminal window kafkacat as given below:
 ```bash
 ~$ kafkacat -C -b localhost:9092 -t myTopic
    % Reached end of topic myTopic [0] at offset 0
-   
+
 ```
 
 Send your request, for example:
 
 ```bash
-~$ curl -i -X POST -d 'foo' 'http://localhost:8080/publish' 
+~$ curl -i -X POST -d 'foo' 'http://localhost:8080/publish'
    HTTP/1.1 202 Accepted
    Server: akka-http/10.1.5
    Date: Wed, 03 Oct 2018 12:43:20 GMT
    Content-Type: text/plain; charset=UTF-8
    Content-Length: 34
-   
+
    Message recived and sent to Kafka!%  
 ```
 
@@ -93,5 +93,31 @@ Finally, can see the output in kafkacat terminal window:
    % Reached end of topic myTopic [0] at offset 3
 ```
 
+Set a different topic name in `application.conf` which has to be provided by you.
 
+## Consumer
 
+Under `consumer/` directory, there is a Maven project which uses Akka, Akka-Stram,
+Alpakka in Scala. This is a simple Kafka consumer server which reads a message from a
+topic and print the message in console.
+
+Build this project as given below:
+
+```bash
+~$ mvn clean install
+```
+
+Run this server as given below:
+
+```bash
+~$ java -jar ./consumer/target/kafkaConsumer-0.1.0-SNAPSHOT-jar-with-dependencies.jar
+```
+
+Or, can provide `-Dconfig.file=./producer/src/main/resources/application.conf` before `-jar` flag.
+
+Open in other terminal window kafkacat as given below to produce a new event in Kafka:
+```bash
+~$ echo "foo" | kafkacat -P -b localhost:9092 -t myTopic
+```
+
+Set a different topic name in `application.conf` which has to be provided by you.

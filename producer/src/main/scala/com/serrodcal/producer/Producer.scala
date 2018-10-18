@@ -67,9 +67,7 @@ object Producer extends App {
   val queue = Source.queue[String](bufferSize, overflowStrategy)
     .map(message => new ProducerRecord[String, String](topic, message))
     .to(akka.kafka.scaladsl.Producer.plainSink(producerSettings))
-    .run()
-    //.to(Sink foreach println)
-    //.run() // in order to "keep" the queue Materialized value instead of the Sink's
+    .run() // in order to "keep" the queue Materialized value instead of the Sink's
 
   val requestHandler: HttpRequest => HttpResponse = {
     case HttpRequest(POST, Uri.Path("/publish"), _, entity, _) => {
@@ -96,25 +94,6 @@ object Producer extends App {
         // this is equivalent to
         // connection handleWith { Flow[HttpRequest] map requestHandler }
       }).run()
-
-  /*val route : Route = post {
-    path("publish") {
-      entity(as[String]) { message =>
-        logger.info(s"Message recived: {$message}")
-        Source.single(message)
-          .map(message => new ProducerRecord[String, String](topic, message))
-          .runWith(akka.kafka.scaladsl.Producer.plainSink(producerSettings))
-        complete(StatusCodes.Accepted, "Message recived and sent to Kafka!")
-      }
-    }
-  }
-
-  // Pipe several routes: val routes = route1 ~ route2 ...
-  val routes = route
-
-  val host = config.getString("server.host")
-  val port = config.getInt("server.port")
-  val bindingFuture = Http().bindAndHandle(routes, host, port)*/
 
   logger.info(s"Server online at http://$host:$port/\nPress RETURN to stop...")
   StdIn.readLine() // let it run until user presses return
